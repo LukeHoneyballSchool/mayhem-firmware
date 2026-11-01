@@ -15,7 +15,7 @@ static const char* pty_names[32] = {
     "Jazz", "Country", "Nation M", "Oldies", "Folk M", "Document", "Test", "Alarm"};
 
 RdsRxView::RdsRxView(NavigationView& nav)
-    : nav_{nav} {
+    : nav_{nav}, current_frequency{field_frequency.value()} {
     baseband::run_image(portapack::spi_flash::image_tag_rds_rx);
 
     add_children({&rssi, &channel, &field_rf_amp, &field_lna, &field_vga,
@@ -30,7 +30,6 @@ RdsRxView::RdsRxView(NavigationView& nav)
     receiver_model.set_baseband_bandwidth(1750000);
     receiver_model.set_squelch_level(0);
     receiver_model.enable();
-
     memset(ps_name, ' ', 8);
     ps_name[8] = '\0';
     memset(radio_text, ' ', 64);
@@ -46,6 +45,14 @@ void RdsRxView::on_data_rds(const RDSGroupMessage& msg) {
     uint16_t block_b = msg.block_b;
     uint16_t block_c = msg.block_c;
     uint16_t block_d = msg.block_d;
+
+    if(current_frequency != field_frequency.value()) {
+        memset(ps_name, ' ', 8);
+        ps_name[8] = '\0';
+        memset(radio_text, ' ', 64);
+        radio_text[64] = '\0';//clear RDS text fields if the frequency is different (different station)
+    }
+    current_frequency = field_frequency.value();
 
     int valid_blocks = 4;
 

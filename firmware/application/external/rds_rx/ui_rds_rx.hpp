@@ -32,6 +32,7 @@ class RdsRxView : public View {
     VGAGainField field_vga{{UI_POS_X(18), UI_POS_Y(0)}};
 
     RxFrequencyField field_frequency{{UI_POS_X(0), UI_POS_Y(0)}, nav_};
+    rf::Frequency current_frequency;
 
     RSSI rssi{{UI_POS_X(21), UI_POS_Y(0), UI_POS_WIDTH_REMAINING(24), 4}};
     Channel channel{{UI_POS_X(21), 5, UI_POS_WIDTH_REMAINING(24), 4}};
